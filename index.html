@@ -762,6 +762,12 @@
             <form id="reg-form" action="enviar-inscripcion.php" method="POST" onsubmit="handleRegistrationSubmit(event)" class="space-y-4">
                 <input type="hidden" name="ruta" id="form-route-hidden" value="">
                 <input type="hidden" name="precio" id="form-price-hidden" value="">
+                
+                <input type="hidden" name="alojamiento" id="form-alojamiento">
+                <input type="hidden" name="fisioterapia" id="form-fisioterapia">
+                <input type="hidden" name="fotos" id="form-fotos">
+                <input type="hidden" name="bici" id="form-bici">
+                <input type="hidden" name="sorteo" id="form-sorteo">
 
                 <div>
                     <label class="block text-xs font-bold text-textDark uppercase mb-2">Nom Complet</label>
@@ -1889,6 +1895,15 @@ const totalPrice = document.getElementById('invoice-total').innerText;
 
 document.getElementById('form-route-hidden').value = routeTitle;
 document.getElementById('form-price-hidden').value = totalPrice;
+
+            document.getElementById('form-alojamiento').value = selectedAccommodationOption;
+
+document.getElementById('form-fisioterapia').value = extrasState.fisioterapia ? 'Sí' : 'No';
+document.getElementById('form-fotos').value = extrasState.fotos ? 'Sí' : 'No';
+document.getElementById('form-bici').value = extrasState.bici ? 'Sí' : 'No';
+
+document.getElementById('form-sorteo').value =
+    document.getElementById('premium-ticket-chk').checked ? 'Sí' : 'No';
 
 const submitBtn = form.querySelector('button[type="submit"]');
 submitBtn.disabled = true;
