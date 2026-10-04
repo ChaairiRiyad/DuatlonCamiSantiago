@@ -762,6 +762,11 @@
             <form id="reg-form" action="enviar-inscripcion.php" method="POST" onsubmit="handleRegistrationSubmit(event)" class="space-y-4">
                 <input type="hidden" name="ruta" id="form-route-hidden" value="">
                 <input type="hidden" name="precio" id="form-price-hidden" value="">
+                <input type="hidden" name="alojamiento" id="form-alojamiento">
+<input type="hidden" name="fisioterapia" id="form-fisioterapia">
+<input type="hidden" name="fotos" id="form-fotos">
+<input type="hidden" name="bici" id="form-bici">
+<input type="hidden" name="sorteo" id="form-sorteo">
 
                 <div>
                     <label class="block text-xs font-bold text-textDark uppercase mb-2">Nom Complet</label>
@@ -1879,44 +1884,67 @@
         }
 
         function handleRegistrationSubmit(e) {
-          e.preventDefault();
+         function handleRegistrationSubmit(e) {
+    e.preventDefault();
 
-const form = e.currentTarget;
+    const form = e.currentTarget;
 
-const routeId = document.getElementById('sim-route')?.value || 'frances';
-const routeTitle = routesData[routeId].title;
-const totalPrice = document.getElementById('invoice-total').innerText;
+    const routeId = document.getElementById('sim-route')?.value || 'frances';
+    const routeTitle = routesData[routeId].title;
+    const totalPrice = document.getElementById('invoice-total').innerText;
 
-document.getElementById('form-route-hidden').value = routeTitle;
-document.getElementById('form-price-hidden').value = totalPrice;
+    // Datos principales
+    document.getElementById('form-route-hidden').value = routeTitle;
+    document.getElementById('form-price-hidden').value = totalPrice;
 
-const submitBtn = form.querySelector('button[type="submit"]');
-submitBtn.disabled = true;
-submitBtn.textContent = 'Enviant...';
+    // Alojamiento seleccionado
+    const alojamientoTexto = {
+        cap: 'Sin alojamiento',
+        alberg: 'Albergues Premium',
+        hotel: 'Hoteles Rurales'
+    };
 
-const datos = new FormData(form);
+    document.getElementById('form-alojamiento').value =
+        alojamientoTexto[selectedAccommodationOption];
 
-datos.set('ruta', routeTitle);
-datos.set('precio', totalPrice);
+    // Servicios adicionales
+    document.getElementById('form-fisioterapia').value =
+        extrasState.fisioterapia ? 'Sí' : 'No';
 
-fetch('https://script.google.com/macros/s/AKfycbyNqGBaHpl24DqnvSYz75KOVbRSZEgrj35aoB5Xg6hXCs-88mgAMI1IdCs5HlVQYP8P/exec', {
-    method: 'POST',
-    body: datos,
-    mode: 'no-cors'
-})
-.then(() => {
-    form.reset();
-    closeRegistrationModal();
-    showToast('Inscripció enviada correctament!');
-})
-.catch(error => {
-    console.error(error);
-    showToast('Error en enviar la inscripció. Tornau a provar.');
-})
-.finally(() => {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Finalitzar i Pagar Reserva';
-});
+    document.getElementById('form-fotos').value =
+        extrasState.fotos ? 'Sí' : 'No';
+
+    document.getElementById('form-bici').value =
+        extrasState.bici ? 'Sí' : 'No';
+
+    // Sorteo premium
+    document.getElementById('form-sorteo').value =
+        document.getElementById('premium-ticket-chk').checked ? 'Sí' : 'No';
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviant...';
+
+    const datos = new FormData(form);
+
+    fetch('https://script.google.com/macros/s/AKfycbyNqGBaHpl24DqnvSYz75KOVbRSZEgrj35aoB5Xg6hXCs-88mgAMI1IdCs5HlVQYP8P/exec', {
+        method: 'POST',
+        body: datos,
+        mode: 'no-cors'
+    })
+    .then(() => {
+        form.reset();
+        closeRegistrationModal();
+        showToast('Inscripció enviada correctament!');
+    })
+    .catch(error => {
+        console.error(error);
+        showToast('Error en enviar la inscripció. Tornau a provar.');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Finalitzar i Pagar Reserva';
+    });
         }
 
         function showToast(msg) {
