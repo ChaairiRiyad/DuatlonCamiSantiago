@@ -1883,8 +1883,8 @@
             document.getElementById('register-modal').classList.add('opacity-0', 'pointer-events-none');
         }
 
-      
-function handleRegistrationSubmit(e) {
+        function handleRegistrationSubmit(e) {
+         function handleRegistrationSubmit(e) {
     e.preventDefault();
 
     const form = e.currentTarget;
@@ -1893,9 +1893,11 @@ function handleRegistrationSubmit(e) {
     const routeTitle = routesData[routeId].title;
     const totalPrice = document.getElementById('invoice-total').innerText;
 
+    // Datos principales
     document.getElementById('form-route-hidden').value = routeTitle;
     document.getElementById('form-price-hidden').value = totalPrice;
 
+    // Alojamiento seleccionado
     const alojamientoTexto = {
         cap: 'Sin alojamiento',
         alberg: 'Albergues Premium',
@@ -1903,8 +1905,9 @@ function handleRegistrationSubmit(e) {
     };
 
     document.getElementById('form-alojamiento').value =
-        alojamientoTexto[selectedAccommodationOption] || 'Sin alojamiento';
+        alojamientoTexto[selectedAccommodationOption];
 
+    // Servicios adicionales
     document.getElementById('form-fisioterapia').value =
         extrasState.fisioterapia ? 'Sí' : 'No';
 
@@ -1914,20 +1917,15 @@ function handleRegistrationSubmit(e) {
     document.getElementById('form-bici').value =
         extrasState.bici ? 'Sí' : 'No';
 
+    // Sorteo premium
     document.getElementById('form-sorteo').value =
-        document.getElementById('premium-ticket-chk')?.checked ? 'Sí' : 'No';
-
-    const datos = new FormData(form);
-
-    // Comprobación de los datos antes de enviarlos
-    console.log('DATOS DE INSCRIPCIÓN:');
-    for (const [key, value] of datos.entries()) {
-        console.log(key + ': ' + value);
-    }
+        document.getElementById('premium-ticket-chk').checked ? 'Sí' : 'No';
 
     const submitBtn = form.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
     submitBtn.textContent = 'Enviant...';
+
+    const datos = new FormData(form);
 
     fetch('https://script.google.com/macros/s/AKfycbyNqGBaHpl24DqnvSYz75KOVbRSZEgrj35aoB5Xg6hXCs-88mgAMI1IdCs5HlVQYP8P/exec', {
         method: 'POST',
@@ -1947,7 +1945,6 @@ function handleRegistrationSubmit(e) {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Finalitzar i Pagar Reserva';
     });
-}
         }
 
         function showToast(msg) {
