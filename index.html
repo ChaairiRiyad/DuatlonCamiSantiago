@@ -1878,35 +1878,54 @@
             document.getElementById('register-modal').classList.add('opacity-0', 'pointer-events-none');
         }
 
-        function handleRegistrationSubmit(e) {
-            e.preventDefault();
+ 
+function handleRegistrationSubmit(e) {
+    e.preventDefault();
 
-            const form = e.currentTarget;
-            const routeId = document.getElementById('sim-route')?.value || 'frances';
-            const routeTitle = routesData[routeId].title;
-            const totalPrice = document.getElementById('invoice-total').innerText;
+    const form = e.currentTarget;
 
-            document.getElementById('form-route-hidden').value = routeTitle;
-            document.getElementById('form-price-hidden').value = totalPrice;
+    const routeId = document.getElementById('sim-route').value;
+    const routeTitle = routesData[routeId].title;
+    const totalPrice = document.getElementById('invoice-total').innerText;
 
-            const submitBtn = form.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Enviant...';
+    const datos = new URLSearchParams();
 
-            fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(async response => {
-                const data = await response.json().catch(() => ({ ok: true }));
-                if (!response.ok || !data.ok) {
-                    throw new Error(data.message || 'Error al enviar la inscripció');
-                }
-                form.reset();
-                closeRegistrationModal();
+    datos.append('name', form.elements['name'].value);
+    datos.append('email', form.elements['email'].value);
+    datos.append('phone', form.elements['phone'].value);
+    datos.append('ruta', routeTitle);
+    datos.append('precio', totalPrice);
+    datos.append('alojamiento', selectedAccommodationOption);
+    datos.append('fisioterapia', extrasState.fisioterapia ? 'Sí' : 'No');
+    datos.append('fotos', extrasState.fotos ? 'Sí' : 'No');
+    datos.append('bici', extrasState.bici ? 'Sí' : 'No');
+    datos.append('sorteo', document.getElementById('premium-ticket-chk').checked ? 'Sí' : 'No');
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviant...';
+
+    fetch('https://script.google.com/macros/s/AKfycbyNqGBaHpl24DqnvSYz75KOVbRSZEgrj35aoB5Xg6hXCs-88mgAMI1IdCs5HlVQYP8P/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        body: datos
+    })
+    .then(() => {
+        form.reset();
+        closeRegistrationModal();
+        showToast('Inscripció enviada! Comprova el correu i les dades.');
+    })
+    .catch(error => {
+        console.error(error);
+        showToast('Error en enviar la inscripció. Torna-ho a provar.');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Finalitzar i Pagar Reserva';
+    });
+}
+          
                 showToast('Inscripció enviada correctament!');
             })
             .catch(error => {
